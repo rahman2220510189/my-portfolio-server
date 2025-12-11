@@ -24,7 +24,8 @@ async function run() {
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB! 🚀");
 
-        const Project = client.db('potfolio').collection('projects'); 
+	const Project = client.db('potfolio').collection('projects'); 
+	const Contact = client.db('potfolio').collection('Contact');
 
         app.get('/api/projects', async (req, res) => {
             try {
@@ -114,15 +115,30 @@ async function run() {
             }
         });
 
-        app.post('/api/contact', async (req, res) => {
-            try {
-                const { name, email, message } = req.body;
-                console.log('Contact form submission:', { name, email, message });
-                res.json({ message: 'Message received successfully' });
-            } catch (error) {
-                res.status(500).json({ message: 'Error processing contact form', error: error.message });
-            }
-        });
+		app.post('/api/contact', async (req, res) => {
+			try {
+				const { name, email, message } = req.body;
+
+				if (!name || !email || !message) {
+					return res.status(400).json({ message: 'Name, email, and message are required.' });
+				}
+
+				const contactData = {
+					name,
+					email,
+					message,
+					createdAt: new Date()
+				};
+
+				const result = await Contact.insertOne(contactData);
+
+				console.log('Contact form submission saved:', contactData);
+
+				res.status(201).json({ message: 'Message received successfully', _id: result.insertedId });
+			} catch (error) {
+				res.status(500).json({ message: 'Error processing contact form', error: error.message });
+			}
+		});
 
     } finally {
         // ...
