@@ -157,6 +157,10 @@ run().catch(console.dir);
 app.get('/', (req, res) => {
     res.send('My portfolio fly in the sky ');
 });
+const SELF_URL = 'https://my-portfolio-server-j9ag.onrender.com/';
+setInterval(() => {
+  fetch(SELF_URL).catch(() => {});
+}, 14 * 60 * 1000);
 
 app.listen(port, () => {
     console.log(`job dao: ${port}`)
