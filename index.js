@@ -5,7 +5,14 @@ require('dotenv').config();
 const port = process.env.PORT || 3000;
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb'); 
 
-app.use(cors());
+const allowedOrigin = process.env.CLIENT_URL || 'https://riyad-portfolio-six.vercel.app';
+
+app.use(cors({
+    origin: allowedOrigin.endsWith('/') ? allowedOrigin.slice(0, -1) : allowedOrigin,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+}));
 app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.cjuyyb2.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
